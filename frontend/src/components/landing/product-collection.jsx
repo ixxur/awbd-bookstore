@@ -9,14 +9,14 @@ function ProductCollection() {
             Popular Books
           </h2>
 
-          <p className="mt-1 text-xs md:text-sm max-w-xl text-gray-500">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque
-            praesentium cumque iure dicta incidunt est ipsam, officia dolor
-            fugit natus?
+          <p className="mt-1 text-xs md:text-sm max-w-md sm:max-w-2xl text-gray-500">
+            Browse our best-selling books, chosen by our community of readers.
+            Discover titles across all genres that have captured the hearts and
+            minds of book lovers. Find your next favorite read today!
           </p>
         </header>
 
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-8 grid gap-4 grid-cols-2 lg:grid-cols-4">
           <li>
             <Link to="/" className="group block overflow-hidden">
               <img

@@ -8,42 +8,42 @@ function Categories() {
           Collections
         </h2>
 
-        <p className="mt-1 text-xs md:text-sm max-w-xl text-gray-500">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque
-          praesentium cumque iure dicta incidunt est ipsam, officia dolor fugit
-          natus?
+        <p className="mt-1 text-xs md:text-sm max-w-md sm:max-w-2xl text-gray-500">
+          Dive into our curated book collections and find your next great read.
+          Whether you are into modern fiction, historical novels, or educational
+          texts, we have something for every reader&apos;s taste.
         </p>
       </header>
 
-      <div className=" grid grid-cols-3 gap-10 lg:grid-cols-6 lg:gap-10">
+      <div className="grid grid-cols-3 gap-10 lg:grid-cols-6 lg:gap-10">
         <Link to="/">
-          <div className="hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Category 1
+          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
+            Modern Fiction Favorites
           </div>
         </Link>
         <Link to="/">
-          <div className="hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Category 2
+          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
+            Historical Epics
           </div>
         </Link>
         <Link to="/">
-          <div className="hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Category 3
+          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
+            Science and Technology
           </div>
         </Link>
         <Link to="/">
-          <div className="hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Category 4
+          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
+            Literary Classics
           </div>
         </Link>
         <Link to="/">
-          <div className="hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Category 5
+          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
+            Young Adult Adventures
           </div>
         </Link>
         <Link to="/">
-          <div className="hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Category 6
+          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
+            Self-Help and Wellness
           </div>
         </Link>
       </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import Navigation from '../components/landing/navigation'
@@ -7,13 +7,47 @@ import Footer from '../components/landing/footer'
 import Breadcrumbs from '../components/listing/breadcrumbs'
 
 function Products() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [products, setProducts] = useState([])
+  const [sortMethod, setSortMethod] = useState(searchParams.get('sort') || '')
+  const [filter, setFilter] = useState({
+    inStock: searchParams.get('inStock') === 'true',
+    outOfStock: searchParams.get('outOfStock') === 'true',
+    priceFrom: searchParams.get('priceFrom') || '',
+    priceTo: searchParams.get('priceTo') || '',
+  })
+
+  const sortProducts = (products, method) => {
+    switch (method) {
+      case 'Title, ASC':
+        return [...products].sort((a, b) => a.title.localeCompare(b.title))
+      case 'Title, DESC':
+        return [...products].sort((a, b) => b.title.localeCompare(a.title))
+      case 'Price, ASC':
+        return [...products].sort((a, b) => a.price - b.price)
+      case 'Price, DESC':
+        return [...products].sort((a, b) => b.price - a.price)
+      default:
+        return products
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch('/data/books.json')
-        const data = await response.json()
+        let data = await response.json()
+        data = sortProducts(data, sortMethod)
+        data = data.filter((product) => {
+          const priceCondition =
+            (!filter.priceFrom || product.price >= filter.priceFrom) &&
+            (!filter.priceTo || product.price <= filter.priceTo)
+          const stockCondition =
+            (filter.inStock && product.stock > 0) ||
+            (filter.outOfStock && product.stock === 0) ||
+            (!filter.inStock && !filter.outOfStock)
+          return priceCondition && stockCondition
+        })
         setProducts(data)
       } catch (error) {
         toast.error('Failed to load products. Please try again later.')
@@ -21,7 +55,17 @@ function Products() {
     }
 
     fetchData()
-  }, [])
+  }, [sortMethod, filter])
+
+  useEffect(() => {
+    const params = {}
+    if (sortMethod) params.sort = sortMethod
+    if (filter.inStock) params.inStock = filter.inStock
+    if (filter.outOfStock) params.outOfStock = filter.outOfStock
+    if (filter.priceFrom) params.priceFrom = filter.priceFrom
+    if (filter.priceTo) params.priceTo = filter.priceTo
+    setSearchParams(params)
+  }, [sortMethod, filter, setSearchParams])
 
   return (
     <div className="w-screen flex justify-center bg-gray-50">
@@ -73,19 +117,19 @@ function Products() {
                     htmlFor="SortBy"
                     className="block text-xs font-medium text-gray-700"
                   >
-                    {' '}
-                    Sort By{' '}
+                    Sort By
                   </label>
-
                   <select
                     id="SortBy"
-                    className="mt-1 rounded border-gray-300 text-sm"
+                    value={sortMethod}
+                    onChange={(e) => setSortMethod(e.target.value)}
+                    className="mt-1 p-2 bg-gray-100 rounded text-sm shadow-sm"
                   >
-                    <option>Sort By</option>
-                    <option value="Title, DESC">Title, DESC</option>
-                    <option value="Title, ASC">Title, ASC</option>
-                    <option value="Price, DESC">Price, DESC</option>
-                    <option value="Price, ASC">Price, ASC</option>
+                    <option value="">Select</option>
+                    <option value="Title, ASC">Title (A-Z)</option>
+                    <option value="Title, DESC">Title (Z-A)</option>
+                    <option value="Price, ASC">Price (Low to High)</option>
+                    <option value="Price, DESC">Price (High to Low)</option>
                   </select>
                 </div>
 
@@ -122,13 +166,15 @@ function Products() {
 
                       <div className="border-t border-gray-200">
                         <header className="flex items-center justify-between p-4">
-                          <span className="text-sm text-gray-700">
-                            {' '}
-                            0 Selected{' '}
-                          </span>
-
                           <button
                             type="button"
+                            onClick={() =>
+                              setFilter({
+                                ...filter,
+                                inStock: false,
+                                outOfStock: false,
+                              })
+                            }
                             className="text-sm text-gray-900 underline underline-offset-4"
                           >
                             Reset
@@ -145,29 +191,17 @@ function Products() {
                                 type="checkbox"
                                 id="FilterInStock"
                                 className="size-5 rounded border-gray-300"
+                                checked={filter.inStock}
+                                onChange={() =>
+                                  setFilter({
+                                    ...filter,
+                                    inStock: !filter.inStock,
+                                  })
+                                }
                               />
 
                               <span className="text-sm font-medium text-gray-700">
-                                {' '}
-                                In Stock (5+){' '}
-                              </span>
-                            </label>
-                          </li>
-
-                          <li>
-                            <label
-                              htmlFor="FilterPreOrder"
-                              className="inline-flex items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                id="FilterPreOrder"
-                                className="size-5 rounded border-gray-300"
-                              />
-
-                              <span className="text-sm font-medium text-gray-700">
-                                {' '}
-                                Pre Order (3+){' '}
+                                In Stock
                               </span>
                             </label>
                           </li>
@@ -180,12 +214,18 @@ function Products() {
                               <input
                                 type="checkbox"
                                 id="FilterOutOfStock"
+                                checked={filter.outOfStock}
+                                onChange={() =>
+                                  setFilter({
+                                    ...filter,
+                                    outOfStock: !filter.outOfStock,
+                                  })
+                                }
                                 className="size-5 rounded border-gray-300"
                               />
 
                               <span className="text-sm font-medium text-gray-700">
-                                {' '}
-                                Out of Stock (10+){' '}
+                                Out of Stock
                               </span>
                             </label>
                           </li>
@@ -217,13 +257,15 @@ function Products() {
 
                       <div className="border-t border-gray-200">
                         <header className="flex items-center justify-between p-4">
-                          <span className="text-sm text-gray-700">
-                            {' '}
-                            The highest price is $600{' '}
-                          </span>
-
                           <button
                             type="button"
+                            onClick={() =>
+                              setFilter({
+                                ...filter,
+                                priceFrom: '',
+                                priceTo: '',
+                              })
+                            }
                             className="text-sm text-gray-900 underline underline-offset-4"
                           >
                             Reset
@@ -241,8 +283,13 @@ function Products() {
                               <input
                                 type="number"
                                 id="FilterPriceFrom"
-                                placeholder="From"
-                                className="w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                                value={filter.priceFrom}
+                                onChange={(e) =>
+                                  setFilter({
+                                    ...filter,
+                                    priceFrom: e.target.value,
+                                  })
+                                }
                               />
                             </label>
 
@@ -258,158 +305,21 @@ function Products() {
                                 placeholder="To"
                                 className="w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                               />
+
+                              <input
+                                type="number"
+                                id="FilterPriceTo"
+                                value={filter.priceTo}
+                                onChange={(e) =>
+                                  setFilter({
+                                    ...filter,
+                                    priceTo: e.target.value,
+                                  })
+                                }
+                              />
                             </label>
                           </div>
                         </div>
-                      </div>
-                    </details>
-
-                    <details className="overflow-hidden rounded border border-gray-300 [&_summary::-webkit-details-marker]:hidden">
-                      <summary className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 transition">
-                        <span className="text-sm font-medium"> Colors </span>
-
-                        <span className="transition group-open:-rotate-180">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="h-4 w-4"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                            />
-                          </svg>
-                        </span>
-                      </summary>
-
-                      <div className="border-t border-gray-200">
-                        <header className="flex items-center justify-between p-4">
-                          <span className="text-sm text-gray-700">
-                            {' '}
-                            0 Selected{' '}
-                          </span>
-
-                          <button
-                            type="button"
-                            className="text-sm text-gray-900 underline underline-offset-4"
-                          >
-                            Reset
-                          </button>
-                        </header>
-
-                        <ul className="space-y-1 border-t border-gray-200 p-4">
-                          <li>
-                            <label
-                              htmlFor="FilterRed"
-                              className="inline-flex items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                id="FilterRed"
-                                className="size-5 rounded border-gray-300"
-                              />
-
-                              <span className="text-sm font-medium text-gray-700">
-                                {' '}
-                                Red{' '}
-                              </span>
-                            </label>
-                          </li>
-
-                          <li>
-                            <label
-                              htmlFor="FilterBlue"
-                              className="inline-flex items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                id="FilterBlue"
-                                className="size-5 rounded border-gray-300"
-                              />
-
-                              <span className="text-sm font-medium text-gray-700">
-                                {' '}
-                                Blue{' '}
-                              </span>
-                            </label>
-                          </li>
-
-                          <li>
-                            <label
-                              htmlFor="FilterGreen"
-                              className="inline-flex items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                id="FilterGreen"
-                                className="size-5 rounded border-gray-300"
-                              />
-
-                              <span className="text-sm font-medium text-gray-700">
-                                {' '}
-                                Green{' '}
-                              </span>
-                            </label>
-                          </li>
-
-                          <li>
-                            <label
-                              htmlFor="FilterOrange"
-                              className="inline-flex items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                id="FilterOrange"
-                                className="size-5 rounded border-gray-300"
-                              />
-
-                              <span className="text-sm font-medium text-gray-700">
-                                {' '}
-                                Orange{' '}
-                              </span>
-                            </label>
-                          </li>
-
-                          <li>
-                            <label
-                              htmlFor="FilterPurple"
-                              className="inline-flex items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                id="FilterPurple"
-                                className="size-5 rounded border-gray-300"
-                              />
-
-                              <span className="text-sm font-medium text-gray-700">
-                                {' '}
-                                Purple{' '}
-                              </span>
-                            </label>
-                          </li>
-
-                          <li>
-                            <label
-                              htmlFor="FilterTeal"
-                              className="inline-flex items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                id="FilterTeal"
-                                className="size-5 rounded border-gray-300"
-                              />
-
-                              <span className="text-sm font-medium text-gray-700">
-                                {' '}
-                                Teal{' '}
-                              </span>
-                            </label>
-                          </li>
-                        </ul>
                       </div>
                     </details>
                   </div>

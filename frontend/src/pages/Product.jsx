@@ -5,10 +5,12 @@ import { toast } from 'react-toastify'
 import Navigation from '../components/landing/navigation'
 import Footer from '../components/landing/footer'
 import Breadcrumbs from '../components/product/breadcrumbs'
+import useUserStore from '../store/user'
 
 function Product() {
   const { id } = useParams()
   const [product, setProduct] = useState({})
+  const { isProductInCart, addProductToCart } = useUserStore()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +28,13 @@ function Product() {
 
     fetchData()
   }, [id])
+
+  const handleAddToCart = () => {
+    addProductToCart(product)
+    toast.success('Product added to cart!')
+  }
+
+  const inCart = isProductInCart(product.id)
 
   return (
     <div className="w-screen sm:h-screen flex justify-center bg-gray-50">
@@ -101,10 +110,15 @@ function Product() {
                 </div>
 
                 <button
-                  disabled={!product.stock}
+                  disabled={!product.stock || inCart}
+                  onClick={handleAddToCart}
                   className="disabled:opacity-50 mt-8 w-full text-center inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700 hover:text-white focus:outline-none focus:ring focus:ring-yellow-400"
                 >
-                  {product.stock ? 'Add To Cart' : 'Out Of Stock'}
+                  {inCart
+                    ? 'Already in Cart'
+                    : product.stock
+                    ? 'Add To Cart'
+                    : 'Out Of Stock'}
                 </button>
               </dl>
             </div>

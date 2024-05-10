@@ -1,6 +1,25 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 function Categories() {
+  const [categories, setCategories] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/data/genre.json')
+        const data = await response.json()
+        const sortedCategories = data.slice(0, 6)
+        setCategories(sortedCategories)
+      } catch (error) {
+        toast.error('Failed to load categories. Please try again later.')
+      }
+    }
+
+    fetchData()
+  }, [])
+
   return (
     <div className="container px-4 mb-6">
       <header className="mb-6">
@@ -16,36 +35,18 @@ function Categories() {
       </header>
 
       <div className="grid grid-cols-3 gap-10 lg:grid-cols-6 lg:gap-10">
-        <Link to="/">
-          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Modern Fiction Favorites
-          </div>
-        </Link>
-        <Link to="/">
-          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Historical Epics
-          </div>
-        </Link>
-        <Link to="/">
-          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Science and Technology
-          </div>
-        </Link>
-        <Link to="/">
-          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Literary Classics
-          </div>
-        </Link>
-        <Link to="/">
-          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Young Adult Adventures
-          </div>
-        </Link>
-        <Link to="/">
-          <div className="text-center hover:bg-blue-600 hover:text-white h-24 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-            Self-Help and Wellness
-          </div>
-        </Link>
+        {categories.map((category, index) => (
+          <Link
+            to={`/books/categories/${category?.title
+              ?.toLowerCase()
+              ?.replace(/\s+/g, '-')}`}
+            key={index}
+          >
+            <div className="px-1 text-center hover:bg-blue-600 hover:text-white h-16 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
+              {category.title}
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   )

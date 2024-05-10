@@ -1,6 +1,38 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 function Login() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const navigate = useNavigate()
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    if (!email || !password) {
+      toast.error('Please provide both email and password.')
+      return
+    }
+
+    try {
+      const response = await fetch('xxxxxxxxxxxxxxxx', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Login failed. Check your credentials and try again.')
+      }
+
+      navigate('/')
+    } catch (error) {
+      toast.error('Login error: ' + error.message)
+    }
+  }
   return (
     <section>
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -38,7 +70,10 @@ function Login() {
               </p>
             </div>
 
-            <form action="#" className="mt-8 grid grid-cols-6 gap-6">
+            <form
+              className="mt-8 grid grid-cols-6 gap-6"
+              onSubmit={handleSubmit}
+            >
               <div className="col-span-6">
                 <label
                   htmlFor="Email"
@@ -53,6 +88,8 @@ function Login() {
                   id="Email"
                   name="email"
                   className="mt-1 p-1.5 w-full rounded-md border-2 border-slate-100 bg-white text-sm text-gray-700 shadow-sm"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
@@ -70,6 +107,8 @@ function Login() {
                   id="Password"
                   name="password"
                   className="mt-1 p-1.5 w-full rounded-md border-2 border-slate-100 bg-white text-sm text-gray-700 shadow-sm"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
 

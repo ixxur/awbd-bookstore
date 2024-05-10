@@ -6,6 +6,12 @@ import 'react-toastify/dist/ReactToastify.css'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import Home from './pages/Home'
+import Product from './pages/Product'
+import Products from './pages/Products'
+import Profile from './pages/Profile'
+import Cart from './pages/Cart'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
 
 function App() {
   return (
@@ -27,6 +33,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/books/:id" element={<Product />} />
+        <Route path="/books" element={<Products />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </div>
   )

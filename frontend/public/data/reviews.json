@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "userId": 1001,
+    "rating": 5,
+    "author": "Paul Starr",
+    "text": "An enthralling read that kept me hooked from the first page! The character development is outstanding, and the plot twists were perfectly timed. Highly recommend for anyone looking for a gripping mystery.",
+    "createdAt": "2024-04-30T14:48:00.000Z"
+  },
+  {
+    "id": 2,
+    "userId": 1002,
+    "rating": 4,
+    "author": "Mia Wong",
+    "text": "This book was a journey through history that was both informative and deeply moving. It beautifully intertwines personal narratives with historical events, making it a must-read for history enthusiasts.",
+    "createdAt": "2024-05-02T09:15:00.000Z"
+  },
+  {
+    "id": 3,
+    "userId": 1003,
+    "rating": 3,
+    "author": "John Doe",
+    "text": "I love how this novel explores complex themes with such elegance and depth. The author's writing style is fluid and captivating, making it easy to get lost in the story. A true literary masterpiece.",
+    "createdAt": "2024-04-28T11:00:00.000Z"
+  },
+  {
+    "id": 4,
+    "userId": 1004,
+    "rating": 5,
+    "author": "Emily R.",
+    "text": "A fantastic and imaginative tale that captures the essence of adventure. The world-building is phenomenal, and the characters are rich and vibrant. Highly recommended for fantasy lovers!",
+    "createdAt": "2024-05-01T16:30:00.000Z"
+  },
+  {
+    "id": 5,
+    "userId": 1005,
+    "rating": 2,
+    "author": "Greg Best",
+    "text": "The plot seemed promising but unfortunately fell flat. The pacing was too slow, and the characters lacked depth, making it a rather tedious read.",
+    "createdAt": "2024-04-25T18:00:00.000Z"
+  },
+  {
+    "id": 6,
+    "userId": 1006,
+    "rating": 5,
+    "author": "Sophia Lee",
+    "text": "The narrative captures the complexities of human emotions and relationships. It's a poignant and thought-provoking read that will linger with you long after the last page.",
+    "createdAt": "2024-05-05T20:45:00.000Z"
+  },
+  {
+    "id": 7,
+    "userId": 1007,
+    "rating": 4,
+    "author": "Dave Smith",
+    "text": "Engaging from start to finish. This book delivers a powerful mix of mystery and horror. Perfect for those who enjoy a good thrill.",
+    "createdAt": "2024-05-03T12:10:00.000Z"
+  },
+  {
+    "id": 8,
+    "userId": 1008,
+    "rating": 1,
+    "author": "Angela Hart",
+    "text": "I was disappointed with the superficial treatment of what could have been an insightful topic. The arguments were weak, and the conclusions unconvincing.",
+    "createdAt": "2024-04-20T07:25:00.000Z"
+  }
+]

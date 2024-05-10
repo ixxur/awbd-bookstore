@@ -8,7 +8,7 @@ import Navigation from '../components/landing/navigation'
 
 function Home() {
   return (
-    <div className="w-screen bg-gray-50 flex flex-col items-center">
+    <div className="w-screen bg-gray-50 flex flex-col items-center px-4">
       <Navigation />
       <Banner />
       <Categories />

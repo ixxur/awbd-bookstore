@@ -1,6 +1,91 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 function Register() {
+  const navigate = useNavigate()
+
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordConfirmation, setPasswordConfirmation] = useState('')
+
+  const cleanInput = (input) => {
+    return input.replace(/[\s-.]+/g, '')
+  }
+
+  const handleFirstNameChange = (event) => {
+    setFirstName(cleanInput(event.target.value))
+  }
+
+  const handleLastNameChange = (event) => {
+    setLastName(cleanInput(event.target.value))
+  }
+
+  const validateEmail = (email) => {
+    const re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    return re.test(String(email).toLowerCase())
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !password ||
+      !passwordConfirmation
+    ) {
+      toast.error('Please fill in all fields.')
+      return
+    }
+
+    if (!validateEmail(email)) {
+      toast.error('Invalid email address.')
+      return
+    }
+
+    if (password !== passwordConfirmation) {
+      toast.error('Passwords do not match.')
+      return
+    }
+
+    const username = `${firstName}${lastName}`
+
+    const dataToSend = {
+      email,
+      password,
+      username,
+    }
+
+    try {
+      const response = await fetch('xxxxxxxxxxxxxxxxx', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to register. Please try again.')
+      }
+
+      toast.success(
+        'Registration successful! You will be redirected to login page!'
+      )
+
+      setTimeout(() => {
+        navigate('/login')
+      }, 2000)
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
   return (
     <section className="bg-white">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -38,7 +123,10 @@ function Register() {
               </p>
             </div>
 
-            <form action="#" className="mt-8 grid grid-cols-6 gap-6">
+            <form
+              className="mt-8 grid grid-cols-6 gap-6"
+              onSubmit={handleSubmit}
+            >
               <div className="col-span-6 sm:col-span-3">
                 <label
                   htmlFor="FirstName"
@@ -52,6 +140,8 @@ function Register() {
                   id="FirstName"
                   name="first_name"
                   className="mt-1 p-1.5 w-full rounded-md border-2 border-slate-100 bg-white text-sm text-gray-700 shadow-sm"
+                  value={firstName}
+                  onChange={handleFirstNameChange}
                 />
               </div>
 
@@ -68,6 +158,8 @@ function Register() {
                   id="LastName"
                   name="last_name"
                   className="mt-1 p-1.5 w-full rounded-md border-2 border-slate-100 bg-white text-sm text-gray-700 shadow-sm"
+                  value={lastName}
+                  onChange={handleLastNameChange}
                 />
               </div>
 
@@ -85,6 +177,7 @@ function Register() {
                   id="Email"
                   name="email"
                   className="mt-1 p-1.5 w-full rounded-md border-2 border-slate-100 bg-white text-sm text-gray-700 shadow-sm"
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
@@ -102,6 +195,7 @@ function Register() {
                   id="Password"
                   name="password"
                   className="mt-1 p-1.5 w-full rounded-md border-2 border-slate-100 bg-white text-sm text-gray-700 shadow-sm"
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
 
@@ -118,6 +212,7 @@ function Register() {
                   id="PasswordConfirmation"
                   name="password_confirmation"
                   className="mt-1 p-1.5 w-full rounded-md border-2 border-slate-100 bg-white text-sm text-gray-700 shadow-sm"
+                  onChange={(e) => setPasswordConfirmation(e.target.value)}
                 />
               </div>
 

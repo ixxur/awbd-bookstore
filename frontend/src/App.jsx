@@ -12,6 +12,7 @@ import Profile from './pages/Profile'
 import Cart from './pages/Cart'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
+import SearchProducts from './pages/SearchProducts'
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/books/search/" element={<SearchProducts />} />
       </Routes>
     </div>
   )

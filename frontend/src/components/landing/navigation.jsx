@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom'
-import { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import useUserStore from '../../store/user'
 import { User, ShoppingCart } from 'lucide-react'
 
 function Navigation() {
   const { user, loading, fetchUser } = useUserStore()
+  const [searchTerm, setSearchTerm] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchUser()
@@ -12,12 +14,30 @@ function Navigation() {
 
   if (loading) return <div>Loading...</div>
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault()
+    navigate(`/books/search?query=${encodeURIComponent(searchTerm)}`)
+  }
+
   return (
     <header className="container px-4">
       <div className="flex h-16 items-center justify-between">
         <Link to="/" className="text-gray-700">
           🦑 SquidBooks
         </Link>
+
+        <form
+          onSubmit={handleSearchSubmit}
+          className="w-2/5 flex items-center gap-4"
+        >
+          <input
+            type="text"
+            placeholder="Search by title, author, genre..."
+            className="px-4 w-full py-2 rounded-md border border-gray-300"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </form>
 
         <div className="flex items-center gap-4">
           {user ? (

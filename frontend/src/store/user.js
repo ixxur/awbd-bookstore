@@ -117,6 +117,7 @@ const useUserStore = create(
       }
       return null
     },
+    logout: () => set({ user: null }),
   }))
 )
 

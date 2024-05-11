@@ -14,6 +14,8 @@ import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import SearchProducts from './pages/SearchProducts'
 import Confirmation from './pages/Confirmation'
+import ProtectedRoute from './components/protected-route'
+import AdminDashboard from './pages/AdminDashboard'
 
 function App() {
   return (
@@ -43,6 +45,14 @@ function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/books/search/" element={<SearchProducts />} />
         <Route path="/order/:id/confirmation" element={<Confirmation />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </div>
   )

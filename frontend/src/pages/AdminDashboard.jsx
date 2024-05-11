@@ -1,22 +1,18 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import useUserStore from '../store/user'
 import Footer from '../components/landing/footer'
 import Navigation from '../components/landing/navigation'
-import Orders from '../components/profile/orders'
+import Users from '../components/admin/users'
+import Invoices from '../components/admin/invoices'
+import Reviews from '../components/admin/reviews'
+import AppReviews from '../components/admin/app-reviews'
 
-function Profile() {
-  const navigate = useNavigate()
-  const { user, logout } = useUserStore((state) => ({
+function AdminDashboard() {
+  const { user } = useUserStore((state) => ({
     user: state.user,
     logout: state.logout,
   }))
   const [activeTab, setActiveTab] = useState('details')
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
 
   return (
     <section className="w-screen h-screen bg-gray-50">
@@ -34,7 +30,7 @@ function Profile() {
                     : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
                 }`}
               >
-                Your Details
+                Users
               </li>
 
               <li
@@ -48,46 +44,38 @@ function Profile() {
                 Invoices
               </li>
 
-              {user?.role === 'admin' ? (
-                <li
-                  onClick={() => navigate('/admin')}
-                  className={`cursor-pointer pointer block rounded-lg px-4 py-2 text-sm font-medium ${
-                    activeTab === 'invoices'
-                      ? 'text-gray-700 bg-gray-100'
-                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-                  }`}
-                >
-                  Admin
-                </li>
-              ) : (
-                ''
-              )}
+              <li
+                onClick={() => setActiveTab('reviews')}
+                className={`cursor-pointer pointer block rounded-lg px-4 py-2 text-sm font-medium ${
+                  activeTab === 'reviews'
+                    ? 'text-gray-700 bg-gray-100'
+                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                }`}
+              >
+                Reviews
+              </li>
 
               <li
-                onClick={handleLogout}
-                className="cursor-pointer pointer block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                onClick={() => setActiveTab('app-reviews')}
+                className={`cursor-pointer pointer block rounded-lg px-4 py-2 text-sm font-medium ${
+                  activeTab === 'app-reviews'
+                    ? 'text-gray-700 bg-gray-100'
+                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                }`}
               >
-                Logout
+                App Reviews
               </li>
             </ul>
 
             <section className="flex-1 h-4/6">
               {activeTab === 'details' && user ? (
-                <div>
-                  <h2 className="text-lg font-semibold mb-4 mt-1">
-                    Your Details
-                  </h2>
-                  <p className="mb-2">
-                    <strong>Email:</strong> {user.email}
-                  </p>
-                  <p>
-                    <strong>Username:</strong> {user.username}
-                  </p>
-                </div>
+                <Users />
               ) : activeTab === 'invoices' ? (
-                <Orders />
+                <Invoices />
+              ) : activeTab === 'reviews' ? (
+                <Reviews />
               ) : (
-                <p>No user details available. Please log in.</p>
+                <AppReviews />
               )}
             </section>
           </div>
@@ -99,4 +87,4 @@ function Profile() {
   )
 }
 
-export default Profile
+export default AdminDashboard

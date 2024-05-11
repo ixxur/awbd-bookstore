@@ -23,8 +23,10 @@ public class SecurityConfig {
         http.httpBasic(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.disable()))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/register", "/swagger-ui","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+                .requestMatchers("/auth/register", "/swagger-ui","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/books/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT,"/books/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE,"/books/**").hasRole("ADMIN")

@@ -1,9 +1,45 @@
+import useUserStore from '../../store/user'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 import SummaryPanel from './summary-panel'
 
-function PaymentForm({ onNext, onBack }) {
+function PaymentForm({ onBack }) {
+  const navigate = useNavigate()
+
+  const { user, addOrder } = useUserStore()
+
+  const calculateTotal = () => {
+    return user?.cart?.items.reduce(
+      (total, item) => total + item.quantity * item.book.price,
+      0
+    )
+  }
+
   const handleFormSubmit = (e) => {
     e.preventDefault()
-    onNext()
+
+    if (
+      !user.address ||
+      Object.values(user.address).some((val) => val === '')
+    ) {
+      alert(
+        'Shipping address is incomplete. Please update your address before placing an order.'
+      )
+      return
+    }
+
+    const total = calculateTotal()
+    const orderDetails = {
+      total: total,
+      date: new Date().toISOString(),
+    }
+
+    const newOrderId = addOrder(orderDetails)
+    if (newOrderId) {
+      navigate(`/order/${newOrderId}/confirmation`)
+    } else {
+      toast.error('Failed to create order')
+    }
   }
 
   return (
@@ -58,7 +94,7 @@ function PaymentForm({ onNext, onBack }) {
             <SummaryPanel
               onNext={handleFormSubmit}
               onBack={onBack}
-              nextLabel="Next Step"
+              nextLabel="Checkout"
               backLabel="Back"
             />
           </div>

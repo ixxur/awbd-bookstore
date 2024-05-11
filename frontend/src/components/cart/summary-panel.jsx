@@ -36,7 +36,7 @@ function SummaryPanel({
 
           <div className="flex justify-between !text-base font-medium pt-5">
             <dt>Total</dt>
-            <dd>€ {calculateTotal().toFixed(2)}</dd>
+            <dd>€ {calculateTotal()?.toFixed(2)}</dd>
           </div>
         </dl>
 

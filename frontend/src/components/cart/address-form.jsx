@@ -11,6 +11,7 @@ function AddressForm({ onNext, onBack }) {
     city: user?.address?.city || '',
     street: user?.address?.street || '',
     number: user?.address?.number || '',
+    phoneNumber: user?.address?.phone || '',
   })
 
   const handleChange = (e) => {
@@ -24,7 +25,8 @@ function AddressForm({ onNext, onBack }) {
       !address.country ||
       !address.city ||
       !address.street ||
-      !address.number
+      !address.number ||
+      !address.phoneNumber
     ) {
       toast.error('Please fill in all fields')
       return
@@ -40,6 +42,7 @@ function AddressForm({ onNext, onBack }) {
         city: user.address.city,
         street: user.address.street,
         number: user.address.number,
+        phoneNumber: user.address.phoneNumber,
       })
     }
   }, [user?.address])
@@ -81,6 +84,14 @@ function AddressForm({ onNext, onBack }) {
                   value={address.number}
                   onChange={handleChange}
                   placeholder="House/Building Number"
+                  className="w-full rounded-lg border-gray-200 p-4 text-sm shadow-sm"
+                />
+                <input
+                  type="text"
+                  name="phoneNumber"
+                  value={address.phoneNumber}
+                  onChange={handleChange}
+                  placeholder="Phone Number"
                   className="w-full rounded-lg border-gray-200 p-4 text-sm shadow-sm"
                 />
               </form>

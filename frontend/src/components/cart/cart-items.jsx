@@ -100,12 +100,16 @@ function CartItems({ onNext }) {
                 )}
               </ul>
 
-              <SummaryPanel
-                onNext={onNext}
-                onBack=""
-                nextLabel="Next Step"
-                backLabel="Back"
-              />
+              {user?.cart?.items?.length ? (
+                <SummaryPanel
+                  onNext={onNext}
+                  onBack=""
+                  nextLabel="Next Step"
+                  backLabel="Back"
+                />
+              ) : (
+                ''
+              )}
             </div>
           </div>
         </div>

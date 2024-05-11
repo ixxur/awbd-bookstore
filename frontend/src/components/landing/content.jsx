@@ -15,7 +15,7 @@ function Content() {
 
           <div className="lg:py-24">
             <h2 className="text-3xl font-bold sm:text-4xl">
-              Discover Arhur&apos;s Classics
+              Discover Classics
             </h2>
 
             <p className="mt-4 max-w-md sm:max-w-2xl text-gray-600">
@@ -28,10 +28,10 @@ function Content() {
             </p>
 
             <Link
-              to="/books/authors/1037"
+              to="/books/search?query=classic"
               className="mt-8 inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700 hover:text-white focus:outline-none focus:ring focus:ring-yellow-400"
             >
-              Arthur&apos;s Books
+              Find Books
             </Link>
           </div>
         </div>

@@ -4,8 +4,11 @@ import master.project.bookstore.entity.Cart;
 import master.project.bookstore.entity.User;
 import master.project.bookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,13 +28,19 @@ public class UserController {
         List <User> users = userService.findAllUsers();
         return ResponseEntity.ok(users);
     }
-    @GetMapping("/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        try {
-            User user = userService.findUserByUsername(username);
-            return ResponseEntity.ok(user);
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @GetMapping("/{username}")
+//    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+//        try {
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            String currentUserName = authentication.getName();
+//
+//            if (!currentUserName.equals(username)) {
+//                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//            }
+//            User user = userService.findUserByUsername(username);
+//            return ResponseEntity.ok(user);
+//        } catch (UsernameNotFoundException e) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 }

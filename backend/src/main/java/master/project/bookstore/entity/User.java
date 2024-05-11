@@ -1,4 +1,5 @@
 package master.project.bookstore.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -62,7 +63,7 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
-
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -103,10 +104,9 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", cart='" + cart + '\'' +
                 '}';

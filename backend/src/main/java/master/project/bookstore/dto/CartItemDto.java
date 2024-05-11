@@ -1,7 +1,10 @@
 package master.project.bookstore.dto;
 
+import org.springframework.data.relational.core.sql.In;
+
 public class CartItemDto {
     private String title;
+    private Integer bookId;
     private int quantity;
 
     public CartItemDto() {
@@ -10,6 +13,19 @@ public class CartItemDto {
     public CartItemDto(String title, int quantity) {
         this.title = title;
         this.quantity = quantity;
+    }
+
+    public CartItemDto(Integer bookId, int quantity) {
+        this.bookId = bookId;
+        this.quantity = quantity;
+    }
+
+    public Integer getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(Integer bookId) {
+        this.bookId = bookId;
     }
 
     public String getTitle() {
@@ -28,7 +44,6 @@ public class CartItemDto {
         this.quantity = quantity;
     }
 
-    // toString method for debugging
     @Override
     public String toString() {
         return "CartItemDto{" +

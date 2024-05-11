@@ -30,7 +30,7 @@ public class OrderService {
     private UserRepository userRepository;
 
     @Transactional
-    public Order createOrder(String username) {
+    public Order createOrder(String username) throws RuntimeException{
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -90,4 +90,8 @@ public class OrderService {
     public List<Order> getOrders(String username) {
         return orderRepository.findByUsername(username);
     }
+    public List<Order> getOrdersByUserId(Long userId) {
+        return orderRepository.findByUserId(userId);
+    }
+    public Order getOrderByIdAndByUserId(Long id, Long userId) {return  orderRepository.findByIdAndByUserId(id,userId);}
 }

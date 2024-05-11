@@ -2,9 +2,9 @@ import { useState } from 'react'
 import Navigation from '../components/landing/navigation'
 import Footer from '../components/landing/footer'
 import Breadcrumbs from '../components/cart/breadcrumbs'
-import CartItems from '../components/cart/CartItems'
-import AddressForm from '../components/cart/AddressForm'
-import PaymentForm from '../components/cart/PaymentForm'
+import CartItems from '../components/cart/cart-items'
+import AddressForm from '../components/cart/address-form'
+import PaymentForm from '../components/cart/payment-form'
 
 function Cart() {
   const [step, setStep] = useState(1)

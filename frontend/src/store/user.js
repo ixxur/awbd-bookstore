@@ -31,17 +31,17 @@ const useUserStore = create(
       const user = get().user
       if (user && user.cart && user.cart.items) {
         const updatedItems = user.cart.items.map((item) =>
-          item.id === itemId ? { ...item, quantity: quantity } : item
+          item.book.id === itemId ? { ...item, quantity: quantity } : item
         )
 
         set({ user: { ...user, cart: { ...user.cart, items: updatedItems } } })
       }
     },
-    removeCartItem: (itemId) => {
+    removeCartItem: (bookId) => {
       const user = get().user
       if (user && user.cart && user.cart.items) {
         const filteredItems = user.cart.items.filter(
-          (item) => item.id !== itemId
+          (item) => item.book.id !== bookId
         )
         set({ user: { ...user, cart: { ...user.cart, items: filteredItems } } })
       }
@@ -81,7 +81,17 @@ const useUserStore = create(
         })
       }
     },
-
+    isBookInCart: (bookId) => {
+      const user = get().user
+      console.log(user, bookId)
+      if (user && user.cart && user.cart.items) {
+        console.log(user.cart.items)
+        return user.cart.items.some(
+          (item) => item.book.id === parseFloat(bookId)
+        )
+      }
+      return false
+    },
     addOrder: (orderDetails) => {
       const user = get().user
       if (user) {

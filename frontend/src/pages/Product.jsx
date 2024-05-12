@@ -10,7 +10,8 @@ import useUserStore from '../store/user'
 function Product() {
   const { id } = useParams()
   const [product, setProduct] = useState({})
-  const { user, addProductToCart } = useUserStore()
+  const { user, addProductToCart, isBookInCart } = useUserStore()
+  const [inCart, setInCart] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,6 +23,7 @@ function Product() {
         }
 
         const data = await response.json()
+        setInCart(isBookInCart(id))
 
         setProduct(data)
       } catch (error) {
@@ -30,7 +32,7 @@ function Product() {
     }
 
     fetchData()
-  }, [id])
+  }, [id, isBookInCart])
 
   const handleAddToCart = async () => {
     addProductToCart(product)
@@ -53,6 +55,8 @@ function Product() {
       if (!response.ok) {
         throw new Error('Failed to update cart in the database.')
       }
+
+      setInCart(true)
     } catch (error) {
       console.error('Failed to update cart on the backend:', error)
     }
@@ -60,7 +64,7 @@ function Product() {
   }
 
   return (
-    <div className="w-screen sm:h-screen flex justify-center bg-gray-50">
+    <div className="w-screen min-h-screen flex justify-center bg-gray-50">
       <div className="container flex flex-col justify-between">
         <Navigation />
 
@@ -134,7 +138,7 @@ function Product() {
 
                 {user ? (
                   <button
-                    disabled={!product.stock}
+                    disabled={!product.stock || inCart}
                     onClick={handleAddToCart}
                     className="disabled:opacity-50 mt-8 w-full text-center inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700 hover:text-white focus:outline-none focus:ring focus:ring-yellow-400"
                   >

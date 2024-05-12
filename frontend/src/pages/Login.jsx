@@ -22,7 +22,7 @@ function Login() {
       navigate('/')
       toast.success('Login successful')
     } catch (error) {
-      toast.error(error.message || 'Failed to login. Please try again later.')
+      toast.error('Invalid username or password. Try again!')
     }
   }
 

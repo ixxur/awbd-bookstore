@@ -37,16 +37,39 @@ function CartItems({ onNext }) {
       )
 
       if (!response.ok) {
-        throw new Error('Failed to register. Please try again.')
+        throw new Error('Failed. Please try again.')
       }
     } catch (error) {
       toast.error(error.message)
     }
   }
 
-  const handleRemoveItem = (itemId) => {
+  const handleRemoveItem = async (itemId) => {
     if (confirm('Are you sure?')) {
       removeCartItem(itemId)
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/users/${user?.id}/cart`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              bookId: itemId,
+              quantity: 0,
+            }),
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error('Failed. Please try again.')
+        }
+      } catch (error) {
+        toast.error(error.message)
+      }
+
       toast.success('Book was removed from cart')
     }
   }
@@ -105,7 +128,7 @@ function CartItems({ onNext }) {
                             value={item.quantity}
                             onChange={(e) =>
                               handleQuantityChange(
-                                item.id,
+                                item.book.id,
                                 parseInt(e.target.value)
                               )
                             }
@@ -115,7 +138,7 @@ function CartItems({ onNext }) {
                         </form>
 
                         <button
-                          onClick={() => handleRemoveItem(item.id)}
+                          onClick={() => handleRemoveItem(item.book.id)}
                           className="text-gray-600 hover:border-gray-50 hover:bg-gray-100"
                         >
                           <Trash2 className="h-4 w-4" />

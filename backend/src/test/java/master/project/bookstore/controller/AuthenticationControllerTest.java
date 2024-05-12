@@ -91,7 +91,6 @@ public class AuthenticationControllerTest {
 
         ResponseEntity<String> response = authenticationController.testAuthentication();
 
-        // Assertions
         assertEquals(200, response.getStatusCodeValue(), "Response status should be OK (200)");
         assertTrue(response.getBody().contains("ruxi"), "Response body should contain username");
     }

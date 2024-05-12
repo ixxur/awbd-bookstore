@@ -27,11 +27,14 @@ public class BookService {
     @Autowired
     private GenreRepository genreRepository;
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BookService.class);
+
     public List<Book> addBooks(List<Book> books) {
         List<Book> savedBooks = new ArrayList<>();
         for (Book book : books) {
             savedBooks.add(bookRepository.save(book));
         }
+        log.info("Saved books {}", savedBooks);
         return savedBooks;
     }
 
@@ -59,7 +62,9 @@ public class BookService {
 
     public Optional<List<Book>> findBooksByGenre(Long genreId) {
         Optional<Genre> genre = genreRepository.findById(genreId);
-        if(genre.isPresent()) return bookRepository.findByGenre(genre);
+        if(genre.isPresent()) {
+            log.info("");
+            return bookRepository.findByGenre(genre);}
         else return null;
     }
 

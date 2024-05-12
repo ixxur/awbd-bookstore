@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import master.project.bookstore.dto.UserRegistrationDto;
 import master.project.bookstore.entity.User;
 import master.project.bookstore.exception.UserAlreadyExistsException;
+import master.project.bookstore.service.BookService;
 import master.project.bookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class AuthenticationController {
     private UserService userService;
     @Autowired
     private ObjectMapper objectMapper;
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthenticationController.class);
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDto registrationDto) {
@@ -30,8 +32,10 @@ public class AuthenticationController {
             User user = userService.registerNewUser(registrationDto.getEmail(),
                     registrationDto.getUsername(),
                     registrationDto.getPassword());
+            log.info("User registered successfully");
             return ResponseEntity.ok("User registered successfully");
         } catch (UserAlreadyExistsException e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -46,8 +50,10 @@ public class AuthenticationController {
 
         try {
             String userJson = objectMapper.writeValueAsString(user);
+            log.info("User authenticated: " + userJson);
             return ResponseEntity.ok(userJson);
         } catch (JsonProcessingException e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.status(403).body("Wrong credentials.");
         }
     }

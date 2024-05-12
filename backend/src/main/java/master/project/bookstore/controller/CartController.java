@@ -19,20 +19,7 @@ public class CartController {
     private CartService cartService;
     @Autowired
     private UserService userService;
-
-//    @PostMapping("/add")
-//    public ResponseEntity<?> addToCart(@PathVariable String username, @RequestBody CartItemDto cartItemDto) {
-//        if (!isUserAuthenticated(username)) {
-//            return ResponseEntity.status(403).body("Access denied");
-//        }
-//
-//        try {
-//            Cart updatedCart = cartService.addToCart(username, cartItemDto.getTitle(), cartItemDto.getQuantity());
-//            return ResponseEntity.ok(updatedCart);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-//        }
-//    }
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CartController.class);
 
     @PostMapping
     public ResponseEntity<?> addToCartByUserId(@PathVariable Long userId, @RequestBody CartItemDto cartItemDto) {
@@ -40,8 +27,10 @@ public class CartController {
 
         try {
             Cart updatedCart = cartService.addToCartByUserIdAndBookId(userId, cartItemDto.getBookId().longValue(), cartItemDto.getQuantity());
+            log.info("Cart updated successfully");
             return ResponseEntity.ok(updatedCart);
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
@@ -50,11 +39,12 @@ public class CartController {
     public ResponseEntity<?> getCartByUserId(@PathVariable Long userId) {
         String username = userService.getUserById(userId).getUsername();
 
-
         try {
             Cart cart = userService.getCartByUsername(username);
+            log.info("Cart successfully retrieved for user " + userId);
             return ResponseEntity.ok(cart);
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
@@ -66,8 +56,10 @@ public class CartController {
                 return ResponseEntity.status(403).body("Access denied");
             }
             cartService.emptyCart(username);
+            log.info("Cart emptied successfully for user "+ userId);
             return ResponseEntity.ok("Cart emptied successfully");
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }

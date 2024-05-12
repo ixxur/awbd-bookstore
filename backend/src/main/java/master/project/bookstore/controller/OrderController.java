@@ -24,14 +24,16 @@ public class OrderController {
     private UserService userService;
     @Autowired
     private ReviewService reviewService;
-
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OrderController.class);
     @PostMapping("users/{userId}/order")
     public ResponseEntity<?> createOrder(@PathVariable Long userId) {
         try {
             String username = userService.getUserById(userId).getUsername();
             Order order = orderService.createOrder(username);
+            log.error("Order with id " + order.getId() + " successfully created");
             return ResponseEntity.ok(order);
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
@@ -40,8 +42,10 @@ public class OrderController {
     public ResponseEntity<List<Order>> getAllOrders() {
         try {
             List<Order> orders = orderService.getAllOrders();
+            log.info("Orders retrieved for all users");
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -52,8 +56,10 @@ public class OrderController {
 
         try {
             List<Order> orders = orderService.getOrders(username);
+            log.info("Orders retrieved successfully for user " + userId);
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -66,8 +72,10 @@ public class OrderController {
         }
         try {
             Order order = orderService.getOrderByIdAndByUserId(orderId, userId);
+            log.info("Order " + orderId + " retrieved successfully for user " + userId);
             return ResponseEntity.ok(order);
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -81,6 +89,7 @@ public class OrderController {
             Review review = reviewService.addReviewToOrder(reviewDto);
             return ResponseEntity.ok(review);
         } catch (Exception e){
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }

@@ -22,12 +22,13 @@ public class BookController {
     private BookService bookService;
     @Autowired
     private ReviewService reviewService;
-
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BookController.class);
     @GetMapping()
     public ResponseEntity<Page<Book>> getAllBooks(@RequestParam(defaultValue = "0") int pageNumber,
                                                   @RequestParam(defaultValue = "10") int pageSize,
                                                   @RequestParam(defaultValue = "title") String sortBy) {
         Page<Book> books = bookService.getAllBooks(pageNumber, pageSize, sortBy);
+        log.info("Fetched books");
         return ResponseEntity.ok().body(books);
     }
 
@@ -35,13 +36,16 @@ public class BookController {
     @PostMapping
     public ResponseEntity<List<Book>> addBooks(@RequestBody List<Book> books) {
         List<Book> savedBooks = bookService.addBooks(books);
+        log.info("Successfully saved books.");
         return ResponseEntity.ok(savedBooks);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getBookById(@PathVariable Long id) {
         if(bookService.getBookById(id).isPresent()) return ResponseEntity.ok(bookService.getBookById(id));
-        else return ResponseEntity.notFound().build();
+        else {
+            log.error("Book with bookId " + id + "not found.");
+            return ResponseEntity.notFound().build();}
     }
 
     @GetMapping("/{id}/reviews")
@@ -54,7 +58,7 @@ public class BookController {
     public ResponseEntity<Optional<List<Book>>> getBooksByAuthor(@PathVariable Long authorId) {
         Optional<List<Book>> books = bookService.findBooksByAuthor(authorId);
         if(books.isPresent()) return ResponseEntity.ok(books);
-        else return ResponseEntity.notFound().build();
+        else {return ResponseEntity.notFound().build();}
     }
 
     @GetMapping("/genre/{genreId}")

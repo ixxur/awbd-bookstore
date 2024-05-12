@@ -17,13 +17,16 @@ import java.util.List;
 public class ReviewController {
     @Autowired
     private ReviewService reviewService;
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ReviewController.class);
 
     @PostMapping
     public ResponseEntity<?> createReview(@RequestBody ReviewDto reviewDto) {
         try {
             Review review = reviewService.createReview(reviewDto);
+            log.info("Review created");
             return ResponseEntity.ok(review);
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
@@ -34,6 +37,7 @@ public class ReviewController {
             List<Review> reviews = reviewService.getReviews();
             return ResponseEntity.ok(reviews);
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
@@ -42,8 +46,10 @@ public class ReviewController {
     public ResponseEntity<?> deleteReview(@PathVariable Long reviewId) {
         try {
             reviewService.deleteReview(reviewId);
+            log.info("Review with id " + reviewId + " successfully deleted.");
             return ResponseEntity.ok().body("Review deleted successfully");
         } catch (Exception e) {
+            log.error("Error: ", e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }

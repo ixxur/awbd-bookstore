@@ -78,7 +78,7 @@ public class CartService {
         if (quantity > book.getStock()) {
             throw new Exception("Requested quantity exceeds book stock");
         }
-        if(quantity < 1) {
+        if(quantity < 0) {
             throw new Exception("Please enter a valid quantity");
         }
 
@@ -93,25 +93,18 @@ public class CartService {
 
         CartItem cartItem = cartItemRepository.findByCartIdAndBookId(cart.getId(), bookId).orElse(null);
 
-        if (cartItem == null) {
-            cartItem = new CartItem(cart, book, quantity);
+        if(quantity == 0) {
+            if(cartItem != null) {
+                cartItemRepository.delete(cartItem);
+            }
         } else {
-            cartItem.setQuantity(quantity);
+            if (cartItem == null) {
+                cartItem = new CartItem(cart, book, quantity);
+            } else {
+                cartItem.setQuantity(quantity);
+            }
+            cartItemRepository.save(cartItem);
         }
-
-        cartItemRepository.save(cartItem);
-//        final Cart finalCart = cart;
-//        CartItem cartItem = cartItemRepository.findByCartIdAndBookId(cart.getId(), book.getId())
-//                .orElseGet(() -> new CartItem(finalCart, book, 0));
-//
-//        int totalQuantity = cartItem.getQuantity() + quantity;
-//
-//        if (totalQuantity <= 0) {
-//            cartItemRepository.delete(cartItem);
-//        } else {
-//            cartItem.setQuantity(totalQuantity);
-//            cartItemRepository.save(cartItem);
-//        }
 
         return cart;
     }

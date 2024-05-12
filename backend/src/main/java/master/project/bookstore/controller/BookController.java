@@ -37,10 +37,6 @@ public class BookController {
         List<Book> savedBooks = bookService.addBooks(books);
         return ResponseEntity.ok(savedBooks);
     }
-//    @GetMapping("/{title}")
-//    public ResponseEntity getBook(@PathVariable String title) {
-//        return ResponseEntity.ok(bookService.getBook(title));
-//    }
 
     @GetMapping("/{id}")
     public ResponseEntity getBookById(@PathVariable Long id) {
@@ -53,10 +49,6 @@ public class BookController {
         if(bookService.getBookById(id).isPresent()) return ResponseEntity.ok(reviewService.getReviewsByBookId(id));
         else return ResponseEntity.notFound().build();
     }
-//    @GetMapping
-//    public ResponseEntity<List<Book>> listBooks() {
-//        return ResponseEntity.ok(bookService.listBooks());
-//    }
 
     @GetMapping("/author/{authorId}")
     public ResponseEntity<Optional<List<Book>>> getBooksByAuthor(@PathVariable Long authorId) {

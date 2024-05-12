@@ -46,19 +46,6 @@ public class OrderController {
         }
     }
 
-//    @GetMapping("/{username}/get")
-//    public ResponseEntity<?> getOrders(@PathVariable String username) {
-//        if (!isUserAuthenticated(username)) {
-//            return ResponseEntity.status(403).body("Access denied");
-//        }
-//        try {
-//            List<Order> orders = orderService.getOrders(username);
-//            return ResponseEntity.ok(orders);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-//        }
-//    }
-
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<?> getOrders(@PathVariable Long userId) {
         String username  = userService.getUserById(userId).getUsername();

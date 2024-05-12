@@ -16,7 +16,7 @@ function Reviews() {
       const data = await response.json()
       setReviews(data)
     } catch (error) {
-      toast.error('Failed to load invoices. Please try again later.')
+      toast.error('Failed to load reviews. Please try again later.')
     }
   }
 

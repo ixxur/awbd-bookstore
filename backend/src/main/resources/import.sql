@@ -19,3 +19,5 @@ INSERT INTO books (title, author_id, isbn, price, stock, description, genre_id, 
 INSERT INTO users (username, password, email, role) VALUES ('user', '$2a$10$BXrKwOhmV53H/4J8/.7Db.0VKW11LwOn6NqKvkq27HcNlKa39OEvq', 'user1@example.com', 'USER');
 INSERT INTO users (username, password, email, role) VALUES ('admin', '$2a$10$fIgHcoZFeAMUhHH3s0XJIOHibgcrVoLx3t1J1N6soi8JDl.SeSd4C', 'admin@example.com', 'ADMIN');
 INSERT INTO users (username, password, email, role) VALUES ('ana', '$2a$10$e3uZ5BWFtLSGRp8tGe6lI.L7x6RFOEDwsd2cNAbOasbZW7bPokqTi', 'user2@example.com', 'USER');
+INSERT INTO carts (user_id) VALUES (1);
+INSERT INTO carts (user_id) VALUES (3);

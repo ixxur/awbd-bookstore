@@ -23,8 +23,6 @@ function Reviews() {
     fetchData()
   }, [])
 
-  console.log(reviews)
-
   const truncateDescription = (description) => {
     return description?.length > 25
       ? description?.substring(0, 25) + '...'

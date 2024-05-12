@@ -28,7 +28,6 @@ function Orders() {
     fetchData()
   }, [user?.id])
 
-  console.log(orders)
   return (
     <div>
       <h3 className="text-lg font-semibold mb-3">Your Orders</h3>

@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .frameOptions(frameOptions -> frameOptions.disable()))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/orders","/reviews","users","/users/{userId}/orders","/users/{userId}/order","/books","/books/{id}","/users/{userId}/cart","/auth/register","/auth/login", "/genres", "/reviews","/swagger-ui","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/h2-console/**").permitAll()
+                .requestMatchers("/reviews/{reviewId}","/orders","/reviews","users","/users/{userId}/orders","/users/{userId}/order","/books","/books/{id}","/users/{userId}/cart","/auth/register","/auth/login", "/genres", "/reviews","/swagger-ui","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/books/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT,"/books/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE,"/books/**").hasRole("ADMIN")

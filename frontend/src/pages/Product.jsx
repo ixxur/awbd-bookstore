@@ -141,11 +141,11 @@ function Product() {
                     {product.stock ? 'Add To Cart' : 'Out Of Stock'}
                   </button>
                 ) : (
-                  <div className=" mt-8 w-full text-center inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700">
-                    <Link to="/login" className="text-white">
+                  <Link to="/login" className="text-white">
+                    <div className=" mt-8 w-full text-center inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700">
                       {product.stock ? 'Add To Cart' : 'Out Of Stock'}
-                    </Link>
-                  </div>
+                    </div>
+                  </Link>
                 )}
               </dl>
             </div>

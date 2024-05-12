@@ -1,38 +1,31 @@
 import { useState } from 'react'
+import useUserStore from '../store/user'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 function Login() {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const loginUser = useUserStore((state) => state.loginUser)
   const navigate = useNavigate()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    if (!email || !password) {
-      toast.error('Please provide both email and password.')
+    if (!username || !password) {
+      toast.error('Please provide both username and password.')
       return
     }
 
     try {
-      const response = await fetch('xxxxxxxxxxxxxxxx', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Login failed. Check your credentials and try again.')
-      }
-
+      await loginUser(username, password)
       navigate('/')
+      toast.success('Login successful')
     } catch (error) {
-      toast.error('Login error: ' + error.message)
+      toast.error(error.message || 'Failed to login. Please try again later.')
     }
   }
+
   return (
     <section>
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -76,20 +69,20 @@ function Login() {
             >
               <div className="col-span-6">
                 <label
-                  htmlFor="Email"
+                  htmlFor="Username"
                   className="block text-sm font-medium text-gray-700"
                 >
                   {' '}
-                  Email{' '}
+                  Username{' '}
                 </label>
 
                 <input
-                  type="email"
-                  id="Email"
-                  name="email"
+                  type="username"
+                  id="Username"
+                  name="username"
                   className="mt-1 p-1.5 w-full rounded-md border-2 border-slate-100 bg-white text-sm text-gray-700 shadow-sm"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import Navigation from '../components/landing/navigation'
@@ -10,17 +10,21 @@ import useUserStore from '../store/user'
 function Product() {
   const { id } = useParams()
   const [product, setProduct] = useState({})
-  const { isProductInCart, addProductToCart } = useUserStore()
+  const { user, isProductInCart, addProductToCart } = useUserStore()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/data/books.json')
+        const response = await fetch(`http://localhost:8080/books/${id}`)
+
+        if (!response.ok) {
+          throw new Error()
+        }
+
         const data = await response.json()
-        const specificProduct = data.find(
-          (product) => product.id === parseInt(id)
-        )
-        setProduct(specificProduct)
+
+        console.log(data)
+        setProduct(data)
       } catch (error) {
         toast.error('Failed to load product details. Please try again later.')
       }
@@ -46,8 +50,8 @@ function Product() {
         <div className="px-4 my-10 h-full grid justify-between grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
           <div className="h-[25rem] lg:w-5/6 rounded-lg bg-gray-200">
             <img
-              src={product.image}
-              alt={product.image}
+              src="https://images.unsplash.com/photo-1714423718253-b1bd2d95ddd9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt=""
               className="w-full h-full rounded-xl"
             />
           </div>
@@ -64,7 +68,7 @@ function Product() {
                 <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                   <dt className="font-medium text-gray-900">Author</dt>
                   <dd className="text-gray-700 sm:col-span-2">
-                    {product.author}
+                    {product?.author?.name}
                   </dd>
                 </div>
 
@@ -78,7 +82,7 @@ function Product() {
                 <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                   <dt className="font-medium text-gray-900">Genre</dt>
                   <dd className="text-gray-700 sm:col-span-2">
-                    {product.genre}
+                    {product.genre?.name}
                   </dd>
                 </div>
 
@@ -109,17 +113,29 @@ function Product() {
                   </dd>
                 </div>
 
-                <button
-                  disabled={!product.stock || inCart}
-                  onClick={handleAddToCart}
-                  className="disabled:opacity-50 mt-8 w-full text-center inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700 hover:text-white focus:outline-none focus:ring focus:ring-yellow-400"
-                >
-                  {inCart
-                    ? 'Already in Cart'
-                    : product.stock
-                    ? 'Add To Cart'
-                    : 'Out Of Stock'}
-                </button>
+                {user ? (
+                  <button
+                    disabled={!product.stock || inCart}
+                    onClick={handleAddToCart}
+                    className="disabled:opacity-50 mt-8 w-full text-center inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700 hover:text-white focus:outline-none focus:ring focus:ring-yellow-400"
+                  >
+                    {inCart
+                      ? 'Already in Cart'
+                      : product.stock
+                      ? 'Add To Cart'
+                      : 'Out Of Stock'}
+                  </button>
+                ) : (
+                  <div className=" mt-8 w-full text-center inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700">
+                    <Link to="/login" className="text-white">
+                      {inCart
+                        ? 'Already in Cart'
+                        : product.stock
+                        ? 'Add To Cart'
+                        : 'Out Of Stock'}
+                    </Link>
+                  </div>
+                )}
               </dl>
             </div>
           </div>

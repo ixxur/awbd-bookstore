@@ -8,7 +8,12 @@ function Categories() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/data/genre.json')
+        const response = await fetch('http://localhost:8080/genres')
+
+        if (!response.ok) {
+          throw new Error()
+        }
+
         const data = await response.json()
         const sortedCategories = data.slice(0, 6)
         setCategories(sortedCategories)
@@ -35,15 +40,15 @@ function Categories() {
       </header>
 
       <div className="grid grid-cols-3 gap-10 lg:grid-cols-6 lg:gap-10">
-        {categories.map((category, index) => (
+        {categories?.map((category, index) => (
           <Link
-            to={`/books/categories/${category?.title
+            to={`/books/categories/${category
               ?.toLowerCase()
               ?.replace(/\s+/g, '-')}`}
             key={index}
           >
             <div className="px-1 text-center hover:bg-blue-600 hover:text-white h-16 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">
-              {category.title}
+              {category}
             </div>
           </Link>
         ))}

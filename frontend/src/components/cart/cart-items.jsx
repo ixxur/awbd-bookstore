@@ -14,8 +14,34 @@ function CartItems({ onNext }) {
     navigate('/login')
   }
 
-  const handleQuantityChange = (itemId, quantity) => {
+  const handleQuantityChange = async (itemId, quantity) => {
     updateCartItemQuantity(itemId, quantity)
+
+    if (!quantity) {
+      return
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/users/${user?.id}/cart`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            bookId: itemId,
+            quantity,
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to register. Please try again.')
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
   const handleRemoveItem = (itemId) => {

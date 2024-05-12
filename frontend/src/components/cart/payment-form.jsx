@@ -15,7 +15,7 @@ function PaymentForm({ onBack }) {
     )
   }
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault()
 
     if (
@@ -32,6 +32,21 @@ function PaymentForm({ onBack }) {
     const orderDetails = {
       total: total,
       date: new Date().toISOString(),
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/users/${user.id}/order`,
+        {
+          method: 'POST',
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error()
+      }
+    } catch (error) {
+      toast.error('Failed to load new order. Please try again later.')
     }
 
     const newOrderId = addOrder(orderDetails)

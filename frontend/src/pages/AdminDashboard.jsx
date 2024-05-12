@@ -5,7 +5,6 @@ import Navigation from '../components/landing/navigation'
 import Users from '../components/admin/users'
 import Invoices from '../components/admin/invoices'
 import Reviews from '../components/admin/reviews'
-import AppReviews from '../components/admin/app-reviews'
 
 function AdminDashboard() {
   const { user } = useUserStore((state) => ({
@@ -54,17 +53,6 @@ function AdminDashboard() {
               >
                 Reviews
               </li>
-
-              <li
-                onClick={() => setActiveTab('app-reviews')}
-                className={`cursor-pointer pointer block rounded-lg px-4 py-2 text-sm font-medium ${
-                  activeTab === 'app-reviews'
-                    ? 'text-gray-700 bg-gray-100'
-                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-                }`}
-              >
-                App Reviews
-              </li>
             </ul>
 
             <section className="flex-1 h-4/6">
@@ -72,10 +60,8 @@ function AdminDashboard() {
                 <Users />
               ) : activeTab === 'invoices' ? (
                 <Invoices />
-              ) : activeTab === 'reviews' ? (
-                <Reviews />
               ) : (
-                <AppReviews />
+                <Reviews />
               )}
             </section>
           </div>

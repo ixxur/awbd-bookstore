@@ -48,7 +48,7 @@ function Profile() {
                 Invoices
               </li>
 
-              {user?.role === 'admin' ? (
+              {user?.role?.toLowerCase() === 'admin' ? (
                 <li
                   onClick={() => navigate('/admin')}
                   className={`cursor-pointer pointer block rounded-lg px-4 py-2 text-sm font-medium ${

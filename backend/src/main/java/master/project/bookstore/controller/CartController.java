@@ -37,9 +37,6 @@ public class CartController {
     @PostMapping
     public ResponseEntity<?> addToCartByUserId(@PathVariable Long userId, @RequestBody CartItemDto cartItemDto) {
         String username = userService.getUserById(userId).getUsername();
-        if (!isUserAuthenticated(username)) {
-            return ResponseEntity.status(403).body("Access denied");
-        }
 
         try {
             Cart updatedCart = cartService.addToCartByUserIdAndBookId(userId, cartItemDto.getBookId().longValue(), cartItemDto.getQuantity());
@@ -66,9 +63,7 @@ public class CartController {
     @GetMapping
     public ResponseEntity<?> getCartByUserId(@PathVariable Long userId) {
         String username = userService.getUserById(userId).getUsername();
-        if (!isUserAuthenticated(username)) {
-            return ResponseEntity.status(403).body("Access denied");
-        }
+
 
         try {
             Cart cart = userService.getCartByUsername(username);

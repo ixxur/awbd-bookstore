@@ -68,4 +68,12 @@ public class Cart {
     public void setItems(List<CartItem> items) {
         this.items = items;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", items=" + items.toString() +
+                '}';
+    }
 }

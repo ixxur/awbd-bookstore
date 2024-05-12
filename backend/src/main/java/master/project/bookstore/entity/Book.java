@@ -1,6 +1,7 @@
 package master.project.bookstore.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.mapping.Join;
 
 import java.math.BigDecimal;
 
@@ -13,18 +14,23 @@ public class Book {
     private Long id;
 
     private String title;
-    private String author;
+    @ManyToOne
+    @JoinColumn(name="author_id")
+    private Author author;
     private String isbn;
     private BigDecimal price;
     private Integer stock;
     private String description;
-    private String genre;
+    @ManyToOne
+    @JoinColumn(name="genre_id")
+    private Genre genre;
     private Integer publicationYear;
 
     public Book() {
     }
 
-    public Book(String title, String author, String isbn, BigDecimal price, Integer stock, String description, String genre, Integer publicationYear) {
+    public Book(Long id, String title, Author author, String isbn, BigDecimal price, Integer stock, String description, Genre genre, Integer publicationYear) {
+        this.id = id;
         this.title = title;
         this.author = author;
         this.isbn = isbn;
@@ -51,11 +57,11 @@ public class Book {
         this.title = title;
     }
 
-    public String getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
@@ -91,11 +97,11 @@ public class Book {
         this.description = description;
     }
 
-    public String getGenre() {
+    public Genre getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(Genre genre) {
         this.genre = genre;
     }
 
@@ -105,5 +111,20 @@ public class Book {
 
     public void setPublicationYear(Integer publicationYear) {
         this.publicationYear = publicationYear;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author=" + author.getName() +
+                ", isbn='" + isbn + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                ", description='" + description + '\'' +
+                ", genre=" + genre.getName() +
+                ", publicationYear=" + publicationYear +
+                '}';
     }
 }

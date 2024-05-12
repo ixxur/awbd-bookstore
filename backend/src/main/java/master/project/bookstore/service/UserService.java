@@ -59,10 +59,18 @@ public class UserService {
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
-
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+    }
     public Cart getCartByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        return user.getCart();
+    }
+
+    public Cart getCartByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with userId: " + userId));
         return user.getCart();
     }
 }

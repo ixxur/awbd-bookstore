@@ -8,8 +8,14 @@ function Reviews() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/data/reviews.json')
+        const response = await fetch('http://localhost:8080/reviews')
+
+        if (!response.ok) {
+          throw new Error()
+        }
+
         const data = await response.json()
+
         const sortedReviews = data
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 3)
@@ -47,7 +53,7 @@ function Reviews() {
               <div className="flex items-center gap-4">
                 <div>
                   <p className="mt-0.5 text-lg font-medium text-gray-900">
-                    {review.author}
+                    {review.user.username}
                   </p>
                   <div className="flex justify-center gap-0.5 text-green-500">
                     {[...Array(review.rating)].map((_, i) => (
@@ -61,7 +67,7 @@ function Reviews() {
                   </div>
                 </div>
               </div>
-              <p className="mt-4 text-gray-700">{review.text}</p>
+              <p className="mt-4 text-gray-700">{review.comment}</p>
             </blockquote>
           ))}
         </div>

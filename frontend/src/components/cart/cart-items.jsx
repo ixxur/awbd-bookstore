@@ -40,8 +40,8 @@ function CartItems({ onNext }) {
                         className="flex items-center gap-4"
                       >
                         <img
-                          src={item.book.image}
-                          alt={item.book.image}
+                          src="https://images.unsplash.com/photo-1714423718253-b1bd2d95ddd9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                          alt="test"
                           className="size-16 rounded object-cover"
                         />
 
@@ -53,12 +53,14 @@ function CartItems({ onNext }) {
                           <dl className="mt-0.5 space-y-px text-[10.5px] text-gray-600">
                             <div>
                               <dt className="inline">Author: </dt>
-                              <dd className="inline">{item.book.author}</dd>
+                              <dd className="inline">
+                                {item.book.author.name}
+                              </dd>
                             </div>
 
                             <div>
                               <dt className="inline">Genre: </dt>
-                              <dd className="inline">{item.book.genre}</dd>
+                              <dd className="inline">{item.book.genre.name}</dd>
                             </div>
                           </dl>
                         </div>

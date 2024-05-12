@@ -5,33 +5,66 @@ const useUserStore = create(
   devtools((set, get) => ({
     user: null,
     loading: true,
-    fetchUser: async () => {
-      const user = get().user
-      set({ loading: true })
-
-      if (user) {
-        set({ user, loading: false })
-        return
-      }
+    loginUser: async (username, password) => {
+      const base64 = btoa(`${username}:${password}`)
+      const headers = new Headers({
+        Authorization: `Basic ${base64}`,
+      })
 
       try {
-        const response = await fetch('/data/user.json')
-        const userData = await response.json()
-        set({ user: userData, loading: false })
+        const response = await fetch('http://localhost:8080/auth/login', {
+          headers: headers,
+        })
+
+        if (!response.ok) {
+          throw new Error('Login failed. Check your credentials and try again.')
+        }
+
+        const user = await response.json()
+        set({ user })
       } catch (error) {
-        console.error('Failed to fetch user:', error)
-        set({ loading: false })
+        console.error('Failed to login:', error)
+        throw error
       }
     },
-    updateCartItemQuantity: (itemId, quantity) => {
+    updateCartItemQuantity: async (itemId, quantity) => {
       const user = get().user
       if (user && user.cart && user.cart.items) {
         const updatedItems = user.cart.items.map((item) =>
           item.id === itemId ? { ...item, quantity: quantity } : item
         )
+
+        // Update the state first
         set({ user: { ...user, cart: { ...user.cart, items: updatedItems } } })
+
+        // Now update the database
+        try {
+          const response = await fetch(
+            `http://localhost:8080/users/${user.id}/cart`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                bookId: itemId,
+                quantity,
+              }),
+            }
+          )
+
+          if (!response.ok) {
+            throw new Error('Failed to update cart in the database.')
+          }
+
+          const updatedCart = await response.json()
+          set({ user: { ...user, cart: updatedCart } })
+        } catch (error) {
+          console.error('Failed to update cart:', error)
+        }
       }
     },
+
     removeCartItem: (itemId) => {
       const user = get().user
       if (user && user.cart && user.cart.items) {
@@ -112,7 +145,6 @@ const useUserStore = create(
     getOrderById: (orderId) => {
       const user = get().user
       if (user && user.orders) {
-        console.log(user)
         return user.orders.find((order) => order.id === orderId)
       }
       return null

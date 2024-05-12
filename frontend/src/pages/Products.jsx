@@ -38,10 +38,15 @@ function Products() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/data/books.json')
-        let data = await response.json()
-        data = sortProducts(data, sortMethod)
-        data = data.filter((product) => {
+        const response = await fetch('http://localhost:8080/books')
+
+        if (!response.ok) {
+          throw new Error()
+        }
+
+        const { content } = await response.json()
+        let sortedContent = sortProducts(content, sortMethod)
+        sortedContent = sortedContent.filter((product) => {
           const priceCondition =
             (!filter.priceFrom || product.price >= filter.priceFrom) &&
             (!filter.priceTo || product.price <= filter.priceTo)
@@ -51,7 +56,7 @@ function Products() {
             (!filter.inStock && !filter.outOfStock)
           return priceCondition && stockCondition
         })
-        setProducts(data)
+        setProducts(sortedContent)
       } catch (error) {
         toast.error('Failed to load products. Please try again later.')
       }

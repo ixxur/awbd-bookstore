@@ -1,18 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import useUserStore from '../../store/user'
 import { User, ShoppingCart } from 'lucide-react'
 
 function Navigation() {
-  const { user, loading, fetchUser } = useUserStore()
+  const { user } = useUserStore()
   const [searchTerm, setSearchTerm] = useState('')
   const navigate = useNavigate()
-
-  useEffect(() => {
-    fetchUser()
-  }, [fetchUser])
-
-  if (loading) return <div>Loading...</div>
 
   const handleSearchSubmit = (e) => {
     e.preventDefault()

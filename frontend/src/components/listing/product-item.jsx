@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 
 function ProductItem({ product }) {
-  console.log(product)
   return (
     <li>
       <Link to={`/books/${product.id}`} className="group block overflow-hidden">

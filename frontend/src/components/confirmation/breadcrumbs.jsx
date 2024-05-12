@@ -70,7 +70,7 @@ function Breadcrumbs({ id }) {
 
         <li>
           <Link
-            to={`/profile/orders`}
+            to={`/profile`}
             className="block transition hover:text-gray-700 text-gray-600"
           >
             Your Orders

@@ -31,7 +31,6 @@ function SearchProducts() {
 
         setProducts(filteredData)
       } catch (error) {
-        console.log(error)
         toast.error('Failed to load products. Please try again later.')
       }
     }

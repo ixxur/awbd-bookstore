@@ -42,9 +42,7 @@ function Categories() {
       <div className="grid grid-cols-3 gap-10 lg:grid-cols-6 lg:gap-10">
         {categories?.map((category, index) => (
           <Link
-            to={`/books/categories/${category
-              ?.toLowerCase()
-              ?.replace(/\s+/g, '-')}`}
+            to={`/books/search?query=${encodeURIComponent(category)}`}
             key={index}
           >
             <div className="px-1 text-center hover:bg-blue-600 hover:text-white h-16 rounded-lg bg-gray-200 flex justify-center items-center text-gray-700">

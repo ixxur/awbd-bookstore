@@ -10,7 +10,7 @@ import useUserStore from '../store/user'
 function Product() {
   const { id } = useParams()
   const [product, setProduct] = useState({})
-  const { user, isProductInCart, addProductToCart } = useUserStore()
+  const { user, addProductToCart } = useUserStore()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,7 +23,6 @@ function Product() {
 
         const data = await response.json()
 
-        console.log(data)
         setProduct(data)
       } catch (error) {
         toast.error('Failed to load product details. Please try again later.')
@@ -33,12 +32,32 @@ function Product() {
     fetchData()
   }, [id])
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     addProductToCart(product)
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/users/${user.id}/cart`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            bookId: product.id,
+            quantity: 1,
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to update cart in the database.')
+      }
+    } catch (error) {
+      console.error('Failed to update cart on the backend:', error)
+    }
     toast.success('Product added to cart!')
   }
-
-  const inCart = isProductInCart(product.id)
 
   return (
     <div className="w-screen sm:h-screen flex justify-center bg-gray-50">
@@ -115,24 +134,16 @@ function Product() {
 
                 {user ? (
                   <button
-                    disabled={!product.stock || inCart}
+                    disabled={!product.stock}
                     onClick={handleAddToCart}
                     className="disabled:opacity-50 mt-8 w-full text-center inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700 hover:text-white focus:outline-none focus:ring focus:ring-yellow-400"
                   >
-                    {inCart
-                      ? 'Already in Cart'
-                      : product.stock
-                      ? 'Add To Cart'
-                      : 'Out Of Stock'}
+                    {product.stock ? 'Add To Cart' : 'Out Of Stock'}
                   </button>
                 ) : (
                   <div className=" mt-8 w-full text-center inline-block rounded bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-700">
                     <Link to="/login" className="text-white">
-                      {inCart
-                        ? 'Already in Cart'
-                        : product.stock
-                        ? 'Add To Cart'
-                        : 'Out Of Stock'}
+                      {product.stock ? 'Add To Cart' : 'Out Of Stock'}
                     </Link>
                   </div>
                 )}

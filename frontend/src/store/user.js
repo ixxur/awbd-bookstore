@@ -34,37 +34,9 @@ const useUserStore = create(
           item.id === itemId ? { ...item, quantity: quantity } : item
         )
 
-        // Update the state first
         set({ user: { ...user, cart: { ...user.cart, items: updatedItems } } })
-
-        // Now update the database
-        try {
-          const response = await fetch(
-            `http://localhost:8080/users/${user.id}/cart`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                bookId: itemId,
-                quantity,
-              }),
-            }
-          )
-
-          if (!response.ok) {
-            throw new Error('Failed to update cart in the database.')
-          }
-
-          const updatedCart = await response.json()
-          set({ user: { ...user, cart: updatedCart } })
-        } catch (error) {
-          console.error('Failed to update cart:', error)
-        }
       }
     },
-
     removeCartItem: (itemId) => {
       const user = get().user
       if (user && user.cart && user.cart.items) {
@@ -73,14 +45,6 @@ const useUserStore = create(
         )
         set({ user: { ...user, cart: { ...user.cart, items: filteredItems } } })
       }
-    },
-    isProductInCart: (productId) => {
-      const user = get().user
-      return (
-        user &&
-        user.cart &&
-        user.cart.items.some((item) => item.book.id === productId)
-      )
     },
     updateUserAddress: (address) => {
       const user = get().user
@@ -105,6 +69,7 @@ const useUserStore = create(
         } else {
           newItem.id = 1
         }
+
         set({
           user: {
             ...user,
@@ -116,6 +81,7 @@ const useUserStore = create(
         })
       }
     },
+
     addOrder: (orderDetails) => {
       const user = get().user
       if (user) {

@@ -29,9 +29,6 @@ public class OrderController {
     public ResponseEntity<?> createOrder(@PathVariable Long userId) {
         try {
             String username = userService.getUserById(userId).getUsername();
-            if (!isUserAuthenticated(username)) {
-                return ResponseEntity.status(403).body("Access denied");
-            }
             Order order = orderService.createOrder(username);
             return ResponseEntity.ok(order);
         } catch (Exception e) {
@@ -65,9 +62,7 @@ public class OrderController {
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<?> getOrders(@PathVariable Long userId) {
         String username  = userService.getUserById(userId).getUsername();
-        if (!isUserAuthenticated(username)) {
-            return ResponseEntity.status(403).body("Access denied");
-        }
+
         try {
             List<Order> orders = orderService.getOrders(username);
             return ResponseEntity.ok(orders);

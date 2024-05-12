@@ -1,41 +1,33 @@
 import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 function Reviews() {
   const [reviews, setReviews] = useState([])
 
   useEffect(() => {
-    // Simulate fetching data
-    setReviews([
-      {
-        id: 1,
-        userId: 1,
-        bookId: 101,
-        createdAt: '2023-05-10',
-        stars: 5,
-        description: 'Great book, highly recommended!',
-      },
-      {
-        id: 2,
-        userId: 2,
-        bookId: 102,
-        createdAt: '2023-05-11',
-        stars: 4,
-        description: 'Interesting read, a bit long but worth it.',
-      },
-      {
-        id: 3,
-        userId: 3,
-        bookId: 103,
-        createdAt: '2023-05-12',
-        stars: 3,
-        description: 'Average, not what I expected.',
-      },
-    ])
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/reviews')
+
+        if (!response.ok) {
+          throw new Error()
+        }
+
+        const data = await response.json()
+        setReviews(data)
+      } catch (error) {
+        toast.error('Failed to load invoices. Please try again later.')
+      }
+    }
+
+    fetchData()
   }, [])
 
+  console.log(reviews)
+
   const truncateDescription = (description) => {
-    return description.length > 25
-      ? description.substring(0, 25) + '...'
+    return description?.length > 25
+      ? description?.substring(0, 25) + '...'
       : description
   }
 
@@ -48,8 +40,8 @@ function Reviews() {
             <th className="px-4 py-2 font-medium text-gray-900">User ID</th>
             <th className="px-4 py-2 font-medium text-gray-900">Book ID</th>
             <th className="px-4 py-2 font-medium text-gray-900">Created At</th>
-            <th className="px-4 py-2 font-medium text-gray-900">Stars</th>
-            <th className="px-4 py-2 font-medium text-gray-900">Description</th>
+            <th className="px-4 py-2 font-medium text-gray-900">Rating</th>
+            <th className="px-4 py-2 font-medium text-gray-900">Comment</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -59,19 +51,19 @@ function Reviews() {
                 {review.id}
               </td>
               <td className="px-4 py-2 text-center text-gray-900">
-                {review.userId}
+                {review.user.id}
               </td>
               <td className="px-4 py-2 text-center text-gray-900">
-                {review.bookId}
+                {review.book.id}
               </td>
               <td className="px-4 py-2 text-center text-gray-700">
                 {review.createdAt}
               </td>
               <td className="px-4 py-2 text-center text-gray-700">
-                {review.stars}
+                {review.rating}
               </td>
               <td className="px-4 py-2 text-center text-gray-700">
-                {truncateDescription(review.description)}
+                {truncateDescription(review.comment)}
               </td>
             </tr>
           ))}

@@ -36,6 +36,7 @@ function Invoices() {
             <th className="px-4 py-2 font-medium text-gray-900">
               Payment Method
             </th>
+            <th className="px-4 py-2 font-medium text-gray-900"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -58,6 +59,11 @@ function Invoices() {
               </td>
               <td className="px-4 py-2 text-center text-gray-700">
                 Cash On Delivery
+              </td>
+              <td className="px-4 py-2 text-center text-gray-700">
+                <button className="bg-blue-500 hover:bg-blue-600 text-white">
+                  Change To Proceed
+                </button>
               </td>
             </tr>
           ))}

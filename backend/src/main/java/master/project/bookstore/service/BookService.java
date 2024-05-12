@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Slf4j
+//@Slf4j
 public class BookService {
     @Autowired
     private BookRepository bookRepository;

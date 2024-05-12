@@ -1,4 +1,6 @@
 package master.project.bookstore.controller;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import master.project.bookstore.dto.UserRegistrationDto;
 import master.project.bookstore.entity.User;
 import master.project.bookstore.exception.UserAlreadyExistsException;
@@ -29,6 +31,8 @@ public class AuthenticationControllerTest {
 
     @Mock
     private SecurityContext securityContext;
+    @Mock
+    private ObjectMapper objectMapper;
 
     @Mock
     private Authentication authentication;
@@ -59,9 +63,9 @@ public class AuthenticationControllerTest {
     @Test
     public void registerUser_UserAlreadyExists() {
         UserRegistrationDto registrationDto = new UserRegistrationDto();
-        registrationDto.setEmail("ruxi@ruxi.com");
-        registrationDto.setUsername("ruxi");
-        registrationDto.setPassword("ruxi");
+        registrationDto.setEmail("ana@ana.com");
+        registrationDto.setUsername("ana");
+        registrationDto.setPassword("ana");
 
         when(userService.registerNewUser(anyString(), anyString(), anyString())).thenThrow(new UserAlreadyExistsException("User already exists"));
 
@@ -72,18 +76,23 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void testAuthentication_AuthenticatedUser() {
+    public void testAuthentication_AuthenticatedUser() throws JsonProcessingException {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getName()).thenReturn("ruxi");
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-
         doReturn(authorities).when(authentication).getAuthorities();
+
+        User user = new User();
+        user.setUsername("ruxi");
+        when(userService.findUserByUsername("ruxi")).thenReturn(user);
+        when(objectMapper.writeValueAsString(user)).thenReturn("{\"username\":\"ruxi\"}");
 
         ResponseEntity<String> response = authenticationController.testAuthentication();
 
+        // Assertions
         assertEquals(200, response.getStatusCodeValue(), "Response status should be OK (200)");
-        assertTrue(response.getBody().contains("Login successful! You are authenticated as: ruxi [ROLE_USER]"), "Response body should include authentication details");
+        assertTrue(response.getBody().contains("ruxi"), "Response body should contain username");
     }
 }

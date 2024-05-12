@@ -28,15 +28,6 @@ public class ReviewController {
         }
     }
 
-//    @GetMapping("/book/{title}")
-//    public ResponseEntity<?> getReviewsByBookTitle(@PathVariable String title) {
-//        try {
-//            List<Review> reviews = reviewService.getReviewsByBookTitle(title);
-//            return ResponseEntity.ok(reviews);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-//        }
-//    }
     @GetMapping
     public ResponseEntity<?> getAllReviews(){
         try {

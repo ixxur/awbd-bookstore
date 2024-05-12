@@ -46,20 +46,6 @@ public class CartController {
         }
     }
 
-//    @GetMapping("/get-cart")
-//    public ResponseEntity<?> getCart(@PathVariable String username) {
-//        if (!isUserAuthenticated(username)) {
-//            return ResponseEntity.status(403).body("Access denied");
-//        }
-//
-//        try {
-//            Cart cart = userService.getCartByUsername(username);
-//            return ResponseEntity.ok(cart);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-//        }
-//    }
-
     @GetMapping
     public ResponseEntity<?> getCartByUserId(@PathVariable Long userId) {
         String username = userService.getUserById(userId).getUsername();

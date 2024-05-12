@@ -28,19 +28,4 @@ public class UserController {
         List <User> users = userService.findAllUsers();
         return ResponseEntity.ok(users);
     }
-//    @GetMapping("/{username}")
-//    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-//        try {
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            String currentUserName = authentication.getName();
-//
-//            if (!currentUserName.equals(username)) {
-//                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//            }
-//            User user = userService.findUserByUsername(username);
-//            return ResponseEntity.ok(user);
-//        } catch (UsernameNotFoundException e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 }

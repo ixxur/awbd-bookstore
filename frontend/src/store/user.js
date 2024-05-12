@@ -83,9 +83,7 @@ const useUserStore = create(
     },
     isBookInCart: (bookId) => {
       const user = get().user
-      console.log(user, bookId)
       if (user && user.cart && user.cart.items) {
-        console.log(user.cart.items)
         return user.cart.items.some(
           (item) => item.book.id === parseFloat(bookId)
         )

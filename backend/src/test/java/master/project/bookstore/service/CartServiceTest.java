@@ -1,25 +1,21 @@
 package master.project.bookstore.service;
 
-import master.project.bookstore.entity.Book;
-import master.project.bookstore.entity.Cart;
-import master.project.bookstore.entity.CartItem;
-import master.project.bookstore.entity.User;
+import master.project.bookstore.entity.*;
 import master.project.bookstore.repository.BookRepository;
 import master.project.bookstore.repository.CartItemRepository;
 import master.project.bookstore.repository.CartRepository;
 import master.project.bookstore.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class CartServiceTest {
     @Mock
     private CartRepository cartRepository;
@@ -36,14 +32,9 @@ public class CartServiceTest {
     @InjectMocks
     private CartService cartService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     void testUserHasCart_WhenCartExists() {
-        String username = "ruxi";
+        String username = "ana";
         when(cartRepository.findByUserUsername(username)).thenReturn(Optional.of(new Cart()));
 
         boolean result = cartService.userHasCart(username);
@@ -64,47 +55,103 @@ public class CartServiceTest {
     }
 
     @Test
+    void addToCartByUserIdAndBookId_BookNotFound() {
+        // Given
+        Long userId = 1L;
+        Long bookId = 2L;
+        int quantity = 3;
+        when(userRepository.findById(userId)).thenReturn(Optional.of(new User()));
+        when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(RuntimeException.class, () -> cartService.addToCartByUserIdAndBookId(userId, bookId, quantity));
+        verify(userRepository, times(1)).findById(userId);
+        verify(bookRepository, times(1)).findById(bookId);
+        verify(cartItemRepository, never()).findByCartIdAndBookId(any(), any());
+        verify(cartItemRepository, never()).save(any());
+    }
+//    @Test
+//    void testAddToCart_NewItem() throws Exception {
+//        Long userId = 1L;
+//        Long bookId = 1L;
+//        int quantity = 1;
+//
+//        User user = new User();
+//        user.setId(userId);
+//        Cart cart = new Cart();
+//        cart.setId(4L);
+//        cart.setUser(user);
+//        user.setCart(cart);
+//
+//        Book book = new Book();
+//        book.setId(12L);
+//        book.setStock(10);
+//
+//        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+//        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+//        when(cartRepository.findByUserId(userId)).thenReturn(Optional.empty());
+//
+//        cart = cartService.addToCartByUserIdAndBookId(userId, bookId, quantity);
+//
+//        assertNotNull(cart);
+//        verify(cartItemRepository).save(ArgumentMatchers.any(CartItem.class));
+//    }
+
+    @Test
     void testAddToCart_NewItem() throws Exception {
-        String username = "maria";
-        String title = "Pride and Prejudice";
+        Long userId = 1L;
+        Long bookId = 1L;
         int quantity = 1;
 
         User user = new User();
-        user.setId(10L);
+        user.setId(userId);
         Cart cart = new Cart();
         cart.setId(4L);
         cart.setUser(user);
         user.setCart(cart);
 
         Book book = new Book();
-        book.setId(12L);
+        book.setId(bookId);
         book.setStock(10);
+        book.setAuthor(new Author());
+        book.setGenre(new Genre());
 
-        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
-        when(bookRepository.findByTitle(title)).thenReturn(Optional.of(book));
-        when(cartRepository.findByUserUsername(username)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+        when(cartItemRepository.findByCartIdAndBookId(cart.getId(), bookId)).thenReturn(Optional.empty());
+        when(cartItemRepository.save(any(CartItem.class))).thenAnswer(invocation -> invocation.getArguments()[0]);
 
-        cart = cartService.addToCart(username, title, quantity);
+        cart = cartService.addToCartByUserIdAndBookId(userId, bookId, quantity);
 
         assertNotNull(cart);
-        verify(cartItemRepository).save(ArgumentMatchers.any(CartItem.class));
+        assertEquals(user.getCart(), cart);
+
+        ArgumentCaptor<CartItem> captor = ArgumentCaptor.forClass(CartItem.class);
+        verify(cartItemRepository).save(captor.capture());
+
+        CartItem savedCartItem = captor.getValue();
+        assertNotNull(savedCartItem);
+        assertEquals(cart.getId(), savedCartItem.getCart().getId());
+        assertEquals(bookId, savedCartItem.getBook().getId());
+        assertEquals(quantity, savedCartItem.getQuantity());
     }
+
 
     @Test
     void testAddToCart_QuantityExceedsStock() {
-        String username = "ruxi";
-        String title = "The Alchemist";
-        int quantity = 70;
+        Long userId = 1L;
+        Long bookId = 1L;
+        int quantity = 20;
 
         User user = new User();
         Book book = new Book();
         book.setStock(10);
 
-        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
-        when(bookRepository.findByTitle(title)).thenReturn(Optional.of(book));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            cartService.addToCart(username, title, quantity);
+            cartService.addToCartByUserIdAndBookId(userId, bookId, quantity);
         });
 
         String expectedMessage = "Requested quantity exceeds book stock";

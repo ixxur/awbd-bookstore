@@ -41,11 +41,11 @@ public class BookService {
     public Page<Book> getAllBooks(int pageNumber, int pageSize, String sortBy) {
         return bookRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending()));
     }
-    public Optional<Book> getBook(String title) {
-        Book book = bookRepository.findByTitle(title)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
-        return Optional.ofNullable(book);
-    }
+//    public Optional<Book> getBook(String title) {
+//        Book book = bookRepository.findByTitle(title)
+//                .orElseThrow(() -> new RuntimeException("Book not found"));
+//        return Optional.ofNullable(book);
+//    }
 
     public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
@@ -63,9 +63,9 @@ public class BookService {
         else return null;
     }
 
-    public Optional<Book> findBooksByTitle(String title) {
-        return bookRepository.findByTitle(title);
-    }
+//    public Optional<Book> findBooksByTitle(String title) {
+//        return bookRepository.findByTitle(title);
+//    }
     public String updateBookStock(Long bookId, int quantity) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Book not found"));

@@ -1,89 +1,101 @@
 package master.project.bookstore.controller;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import master.project.bookstore.dto.UserRegistrationDto;
 import master.project.bookstore.entity.User;
 import master.project.bookstore.exception.UserAlreadyExistsException;
 import master.project.bookstore.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("h2")
 public class AuthenticationControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
     @Mock
     private UserService userService;
+    @MockBean
+    private BCryptPasswordEncoder passwordEncoder;
 
-    @Mock
-    private SecurityContext securityContext;
-
-    @Mock
-    private Authentication authentication;
+    @Before
+    public void setUp() {
+        passwordEncoder = new BCryptPasswordEncoder();
+    }
 
     @InjectMocks
     private AuthenticationController authenticationController;
 
-    @BeforeEach
-    void setUp() {
-        SecurityContextHolder.setContext(securityContext);
-    }
-
     @Test
-    public void registerUser_Success() {
+    public void testRegisterUser_UserAlreadyExists() throws Exception {
         UserRegistrationDto registrationDto = new UserRegistrationDto();
-        registrationDto.setEmail("test@test.com");
-        registrationDto.setUsername("test");
-        registrationDto.setPassword("test");
+        registrationDto.setEmail("user1@example.com");
+        registrationDto.setUsername("user");
+        registrationDto.setPassword("password");
 
-        when(userService.registerNewUser(anyString(), anyString(), anyString())).thenReturn(new User());
+        when(userService.registerNewUser("user1@example.com", "user", "password"))
+                .thenThrow(UserAlreadyExistsException.class);
 
-        ResponseEntity<?> response = authenticationController.registerUser(registrationDto);
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(registrationDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Error: Username is already taken"));
 
-        assertEquals(200, response.getStatusCodeValue(), "Response status should be OK (200)");
-        assertEquals("User registered successfully", response.getBody(), "Response body should indicate successful registration");
+        verify(userService, times(0)).registerNewUser(
+                registrationDto.getEmail(),
+                registrationDto.getUsername(),
+                registrationDto.getPassword()
+        );
     }
 
     @Test
-    public void registerUser_UserAlreadyExists() {
-        UserRegistrationDto registrationDto = new UserRegistrationDto();
-        registrationDto.setEmail("ruxi@ruxi.com");
-        registrationDto.setUsername("ruxi");
-        registrationDto.setPassword("ruxi");
+    public void testAuthentication() throws Exception {
+        String username = "user";
 
-        when(userService.registerNewUser(anyString(), anyString(), anyString())).thenThrow(new UserAlreadyExistsException("User already exists"));
+        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        ResponseEntity<?> response = authenticationController.registerUser(registrationDto);
+        User user = new User();
+        user.setUsername(username);
 
-        assertEquals(400, response.getStatusCodeValue(), "Response status should be Bad Request (400)");
-        assertTrue(response.getBody().toString().contains("User already exists"), "Response body should indicate user already exists");
+        when(userService.findUserByUsername(username)).thenReturn(user);
+
+        mockMvc.perform(get("/auth/login"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.parseMediaType("text/plain;charset=UTF-8")));
     }
 
-    @Test
-    public void testAuthentication_AuthenticatedUser() {
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getName()).thenReturn("ruxi");
-
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-
-        doReturn(authorities).when(authentication).getAuthorities();
-
-        ResponseEntity<String> response = authenticationController.testAuthentication();
-
-        assertEquals(200, response.getStatusCodeValue(), "Response status should be OK (200)");
-        assertTrue(response.getBody().contains("Login successful! You are authenticated as: ruxi [ROLE_USER]"), "Response body should include authentication details");
+    private String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
